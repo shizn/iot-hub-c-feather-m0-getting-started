@@ -24,13 +24,11 @@ require('gulp-common')(gulp, 'arduino-adafruit-samd-feather-m0', {
     "wifi_password": "[Wi-Fi password]",
     "iot_hub_consumer_group_name": "cg1"
   },
-  configPostfix: 'm0wifi',
+  configPostfix: 'arduino',
   app: ['app.ino', 'config.h', 'NTPClient.h', 'NTPCLient.cpp']
 });
 
 var config = gulp.config;
-
-console.log(config);
 
 /**
  * Gulp task to send cloud-to-device messages from host machine
