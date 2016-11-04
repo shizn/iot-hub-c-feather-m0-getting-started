@@ -1,6 +1,6 @@
 ﻿/*
-* IoT Hub Adafruit Feather HUZZAH ESP8266 - Microsoft Sample Code - Copyright (c) 2016 - Licensed MIT
-*/
+ * IoT Hub Adafruit Feather M0 WiFi - Microsoft Sample Code - Copyright (c) 2016 - Licensed MIT
+ */
 'use strict';
 
 var gulp = require('gulp');
@@ -12,7 +12,7 @@ var receiveMessages = doesReadStorage ? require('./azure-table.js').readAzureTab
 /**
  * Setup common gulp tasks: init, install-tools, deploy
  */
-require('gulp-common')(gulp, 'arduino-esp8266-huzzah', {
+require('gulp-common')(gulp, 'arduino-adafruit-samd-feather-m0', {
   appName: 'lesson-3',
   configTemplate: {
     "iot_hub_connection_string": "[IoT hub connection string]",
@@ -22,8 +22,8 @@ require('gulp-common')(gulp, 'arduino-esp8266-huzzah', {
     "wifi_password": "[Wi-Fi password]",
     "iot_hub_consumer_group_name": "cg1"
   },
-  configPostfix: 'huzzah',
-  app: ['app.ino', 'config.h']
+  configPostfix: 'm0wifi',
+  app: ['app.ino', 'config.h', 'NTPClient.h', 'NTPCLient.cpp']
 });
 
 var config = gulp.config;
@@ -38,3 +38,4 @@ if (doesReadStorage) {
   gulp.task('query-iot-hub-messages', false, () => { receiveMessages(config); });
   gulp.task('run', 'Runs deployed sample on the board', ['query-iot-hub-messages']);
 }
+

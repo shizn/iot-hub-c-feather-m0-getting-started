@@ -1,6 +1,7 @@
 ﻿/*
-* IoT Hub Raspberry Pi NodeJS - Microsoft Sample Code - Copyright (c) 2016 - Licensed MIT
+* IoT Hub Adafruit Feather M0 WiFi - Microsoft Sample Code - Copyright (c) 2016 - Licensed MIT
 */
+
 'use strict';
 
 var eslint = require('gulp-eslint');

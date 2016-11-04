@@ -1,5 +1,5 @@
 /*
-* IoT Hub Raspberry Pi NodeJS - Microsoft Sample Code - Copyright (c) 2016 - Licensed MIT
+* IoT Hub NodeJS - Microsoft Sample Code - Copyright (c) 2016 - Licensed MIT
 */
 'use strict';
 

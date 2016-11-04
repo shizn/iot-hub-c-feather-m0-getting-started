@@ -1,5 +1,5 @@
 ﻿/*
-* IoT Hub Adafruit Feather HUZZAH ESP8266 - Microsoft Sample Code - Copyright (c) 2016 - Licensed MIT
+* IoT Hub Adafruit Feather M0 WiFi - Microsoft Sample Code - Copyright (c) 2016 - Licensed MIT
 */
 'use strict';
 
@@ -14,7 +14,7 @@ var sentMessageCount = 0;
 /**
  * Setup common gulp tasks: init, install-tools, deploy, run
  */
-require('gulp-common')(gulp, 'arduino-esp8266-huzzah', {
+require('gulp-common')(gulp, 'arduino-adafruit-samd-feather-m0', {
   appName: 'lesson-4',
   configTemplate: {
     "iot_hub_connection_string": "[IoT hub connection string]",
@@ -22,12 +22,15 @@ require('gulp-common')(gulp, 'arduino-esp8266-huzzah', {
     "azure_storage_connection_string": "[Azure storage connection string]",
     "wifi_ssid": "[Wi-Fi SSID]",
     "wifi_password": "[Wi-Fi password]",
+    "iot_hub_consumer_group_name": "cg1"
   },
-  configPostfix: 'huzzah',
-  app: ['app.ino', 'config.h']
+  configPostfix: 'm0wifi',
+  app: ['app.ino', 'config.h', 'NTPClient.h', 'NTPCLient.cpp']
 });
 
 var config = gulp.config;
+
+console.log(config);
 
 /**
  * Gulp task to send cloud-to-device messages from host machine
@@ -110,3 +113,4 @@ gulp.task('send-cloud-to-device-messages', false, function () {
  * Override 'run' task with customized behavior
  */
 gulp.task('run', 'Runs deployed sample on the board', ['deploy', 'send-cloud-to-device-messages']);
+

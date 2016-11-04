@@ -1,7 +1,7 @@
 {
-  "name": "iot-hub-c-feather-huzzah-getting-started",
+  "name": "iot-hub-c-feather-m0-wifi-started",
   "version": "1.0.0",
-  "description": "Arduiono sample codes for getting started with Azure IoT Hub on Adafruit Feather HUZZAH ESP8266",
+  "description": "Arduiono sample codes for getting started with Azure IoT Hub on Adafruit Feather M0 WiFi",
   "main": "gulpfile.js",
   "license": "MIT",
   "devDependencies": {
