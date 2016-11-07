@@ -1,6 +1,6 @@
 ﻿/*
-* IoT Hub Adafruit Feather M0 WiFi - Microsoft Sample Code - Copyright (c) 2016 - Licensed MIT
-*/
+ * IoT Hub Adafruit Feather M0 WiFi - Microsoft Sample Code - Copyright (c) 2016 - Licensed MIT
+ */
 'use strict';
 
 var gulp = require('gulp');
@@ -111,4 +111,3 @@ gulp.task('send-cloud-to-device-messages', false, function () {
  * Override 'run' task with customized behavior
  */
 gulp.task('run', 'Runs deployed sample on the board', ['deploy', 'send-cloud-to-device-messages']);
-

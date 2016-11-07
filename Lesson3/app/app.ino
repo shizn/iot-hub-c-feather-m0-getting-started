@@ -19,6 +19,9 @@
 #define WINC_EN   2
 
 #define LED_PIN 13
+#define MAX_MESSAGE_COUNT 20
+
+int sentMessageCount = 0;
 
 // Setup the WINC1500 connection with the pins above and the default hardware SPI.
 Adafruit_WINC1500 WiFi(WINC_CS, WINC_IRQ, WINC_RST);
@@ -27,8 +30,8 @@ static Adafruit_WINC1500SSLClient sslClient; // for Adafruit WINC1500
 
 /*
  * The new version of AzureIoTHub library change the AzureIoTHubClient signature.
- * As a temporary solution, we will test the definition of AzureIoTHubVersion, which is only defined 
- *    in the new AzureIoTHub library version. Once we totally deprecate the last version, we can take 
+ * As a temporary solution, we will test the definition of AzureIoTHubVersion, which is only defined
+ *    in the new AzureIoTHub library version. Once we totally deprecate the last version, we can take
  *    the #ifdef out.
  */
 #ifdef AzureIoTHubVersion
@@ -40,10 +43,10 @@ AzureIoTHubClient iotHubClient(sslClient);
 void initSerial()
 {
     // Start serial and initialize stdout
-    Serial.begin(9600);
+    Serial.begin(115200);
 
     // wait for serial port to connect. Needed for native USB port only
-    while (!Serial); 
+    while (!Serial);
 }
 
 void initWifi()
@@ -58,31 +61,31 @@ void initWifi()
 
     while (WiFi.status() != WL_CONNECTED)
     {
-      // Get Mac Address and show it.
-      // WiFi.macAddress(mac) save the mac address into a six length array, but the endian may be different. The m0 board should
-      // start from mac[5] to mac[0], but some other kinds of board run in the oppsite direction.  
-      uint8_t mac[6];
-      WiFi.macAddress(mac);
-      Serial.print("You device with MAC address ");
-      Serial.print(mac[5], HEX);
-      Serial.print(":");
-      Serial.print(mac[4], HEX);
-      Serial.print(":");
-      Serial.print(mac[3], HEX);
-      Serial.print(":");
-      Serial.print(mac[2], HEX);
-      Serial.print(":");
-      Serial.print(mac[1], HEX);
-      Serial.print(":");
-      Serial.print(mac[0], HEX);
-      Serial.print(" connects to ");
-      Serial.print(ssid);
-      Serial.println(" failed! Waiting 10 seconds to retry.");
-      WiFi.begin(ssid, pass);
-      delay(10000);
+        // Get Mac Address and show it.
+        // WiFi.macAddress(mac) save the mac address into a six length array, but the endian may be different. The M0 WiFi board should
+        // start from mac[5] to mac[0], but some other kinds of board run in the oppsite direction.
+        uint8_t mac[6];
+        WiFi.macAddress(mac);
+        Serial.print("You device with MAC address ");
+        Serial.print(mac[5], HEX);
+        Serial.print(":");
+        Serial.print(mac[4], HEX);
+        Serial.print(":");
+        Serial.print(mac[3], HEX);
+        Serial.print(":");
+        Serial.print(mac[2], HEX);
+        Serial.print(":");
+        Serial.print(mac[1], HEX);
+        Serial.print(":");
+        Serial.print(mac[0], HEX);
+        Serial.print(" connects to ");
+        Serial.print(ssid);
+        Serial.println(" failed! Waiting 10 seconds to retry.");
+        WiFi.begin(ssid, pass);
+        delay(10000);
     }
 
-    Serial.print("Connected to wifi");
+    Serial.print("Connected to wifi ");
     Serial.println(ssid);
 }
 
@@ -97,12 +100,12 @@ void initTime()
 
     while (true)
     {
-        epochTime = ntpClient.getEpochTime("0.pool.ntp.org");
+        epochTime = ntpClient.getEpochTime("pool.ntp.org");
 
         if (epochTime == (time_t)-1)
         {
-            Serial.println("Fetching NTP epoch time failed! Waiting 5 seconds to retry.");
-            delay(5000);
+            Serial.println("Fetching NTP epoch time failed! Waiting 2 seconds to retry.");
+            delay(2000);
         }
         else
         {
@@ -111,7 +114,7 @@ void initTime()
             break;
         }
     }
-    
+
     ntpClient.end();
 
     struct timeval tv;
@@ -127,7 +130,7 @@ static void sendCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result, void* userCon
     {
         LogInfo("Message sent to Azure IoT Hub\r\n");
         digitalWrite(LED_PIN, HIGH);
-        delay(100);
+        delay(500);
         digitalWrite(LED_PIN, LOW);
     }
     else
@@ -136,9 +139,14 @@ static void sendCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result, void* userCon
     }
 }
 
-static void sendMessage(IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle, const unsigned char* buffer, size_t size)
+static void sendMessage(IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle)
 {
-    IOTHUB_MESSAGE_HANDLE messageHandle = IoTHubMessage_CreateFromByteArray(buffer, size);
+    ++sentMessageCount;
+    char buffer[256];
+    sprintf(buffer, "{\"deviceId\": \"%s\", \"messageId\" : %d}", "m0wifi", sentMessageCount);
+
+
+    IOTHUB_MESSAGE_HANDLE messageHandle = IoTHubMessage_CreateFromByteArray((const unsigned char*)buffer, strlen(buffer));
     if (messageHandle == NULL)
     {
         LogInfo("unable to create a new IoTHubMessage\r\n");
@@ -163,7 +171,7 @@ void setup()
     // enable red LED GPIO for writing
     pinMode(LED_PIN, OUTPUT);
 
-    // delay to give user time to connect serial terminal, during this time red LED will be on    
+    // delay to give user time to connect serial terminal, during this time red LED will be on
     digitalWrite(LED_PIN, HIGH);
     delay(10000);
     digitalWrite(LED_PIN, LOW);
@@ -193,16 +201,15 @@ void loop()
 {
     IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle = IoTHubClient_LL_CreateFromConnectionString(connectionString, HTTP_Protocol);
 
-    
     if (iotHubClientHandle == NULL)
     {
         LogInfo("Failed on IoTHubClient_CreateFromConnectionString\r\n");
     }
     else
     {
-        while (1)
+        while (sentMessageCount < MAX_MESSAGE_COUNT)
         {
-            sendMessage(iotHubClientHandle, (const unsigned char*)"message", 7);
+            sendMessage(iotHubClientHandle);
             IoTHubClient_LL_DoWork(iotHubClientHandle);
             delay(2000);
         }

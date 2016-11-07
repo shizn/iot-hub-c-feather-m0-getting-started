@@ -18,14 +18,16 @@ int NTPClient::begin()
 
 uint32_t NTPClient::getEpochTime(const char* host, int port, unsigned long timeout)
 {
-    if (host == NULL || port < 1) {
+    if (host == NULL || port < 1) 
+    {
         return (uint32_t)-1;
     }
 
     prepareRequest();
     sendRequest(host, port);
 
-    if (!receiveResponse(timeout)) {
+    if (!receiveResponse(timeout)) 
+    {
         return (uint32_t)-1;
     }
 
@@ -67,11 +69,13 @@ int NTPClient::receiveResponse(unsigned long timeout)
     long start = millis();
     int size = 0;
 
-    while(size == 0 && (millis() - start) < timeout) {
+    while(size == 0 && (millis() - start) < timeout) 
+    {
         size = _udp.parsePacket();
     }
 
-    if (size != NTP_PACKET_SIZE) {
+    if (size != NTP_PACKET_SIZE) 
+    {
         return 0;
     }
 

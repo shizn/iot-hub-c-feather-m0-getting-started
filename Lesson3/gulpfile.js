@@ -33,9 +33,8 @@ var config = gulp.config;
  */
 if (doesReadStorage) {
   gulp.task('query-table-storage', false, () => { receiveMessages(config); });
-  gulp.task('run', 'Runs deployed sample on the board', ['query-table-storage']);
+  gulp.task('run', 'Runs deployed sample on the board', ['deploy', 'query-table-storage']);
 } else {
   gulp.task('query-iot-hub-messages', false, () => { receiveMessages(config); });
-  gulp.task('run', 'Runs deployed sample on the board', ['query-iot-hub-messages']);
+  gulp.task('run', 'Runs deployed sample on the board', ['deploy', 'query-iot-hub-messages']);
 }
-
