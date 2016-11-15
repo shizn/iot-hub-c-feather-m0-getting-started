@@ -13,15 +13,18 @@
 
 #include "config.h"
 
-#define WINC_CS   8
-#define WINC_IRQ  7
-#define WINC_RST  4
-#define WINC_EN   2
+#define WINC_EN  2
 
-#define LED_PIN 13
-#define MAX_MESSAGE_COUNT 20
+const int WINC_CS  = 8;
+const int WINC_IRQ = 7;
+const int WINC_RST = 4;
 
-int sentMessageCount = 0;
+const int LED_PIN  = 13;
+const int MAX_MESSAGE_COUNT = 20;
+
+static int sentMessageCount = 0;
+static unsigned long lastMessageSentTime = 0;
+static bool messagePending = false;
 
 // Setup the WINC1500 connection with the pins above and the default hardware SPI.
 Adafruit_WINC1500 WiFi(WINC_CS, WINC_IRQ, WINC_RST);
@@ -93,7 +96,7 @@ void initTime()
 {
     Adafruit_WINC1500UDP     _udp;
 
-    time_t epochTime = (time_t)-1;
+    time_t epochTime = (time_t) - 1;
 
     NTPClient ntpClient;
     ntpClient.begin();
@@ -102,7 +105,7 @@ void initTime()
     {
         epochTime = ntpClient.getEpochTime("pool.ntp.org");
 
-        if (epochTime == (time_t)-1)
+        if (epochTime == (time_t) - 1)
         {
             Serial.println("Fetching NTP epoch time failed! Waiting 2 seconds to retry.");
             delay(2000);
@@ -128,22 +131,23 @@ static void sendCallback(IOTHUB_CLIENT_CONFIRMATION_RESULT result, void* userCon
 {
     if (IOTHUB_CLIENT_CONFIRMATION_OK == result)
     {
+        ++sentMessageCount;
         LogInfo("Message sent to Azure IoT Hub\r\n");
         digitalWrite(LED_PIN, HIGH);
-        delay(500);
+        delay(100);
         digitalWrite(LED_PIN, LOW);
     }
     else
     {
         LogInfo("Failed to send message to Azure IoT Hub\r\n");
     }
+    messagePending = false;
 }
 
 static void sendMessage(IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle)
 {
-    ++sentMessageCount;
     char buffer[256];
-    sprintf(buffer, "{\"deviceId\": \"%s\", \"messageId\" : %d}", "m0wifi", sentMessageCount);
+    sprintf(buffer, "{\"deviceId\": \"%s\", \"messageId\" : %d}", "m0wifi", sentMessageCount + 1);
 
 
     IOTHUB_MESSAGE_HANDLE messageHandle = IoTHubMessage_CreateFromByteArray((const unsigned char*)buffer, strlen(buffer));
@@ -159,6 +163,8 @@ static void sendMessage(IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle)
         }
         else
         {
+            lastMessageSentTime = millis();
+            messagePending = true;
             LogInfo("IoTHubClient accepted the message for delivery\r\n");
         }
 
@@ -209,9 +215,12 @@ void loop()
     {
         while (sentMessageCount < MAX_MESSAGE_COUNT)
         {
-            sendMessage(iotHubClientHandle);
+            while((lastMessageSentTime + 2000 < millis()) && !messagePending)
+            {
+                sendMessage(iotHubClientHandle);
+            }
             IoTHubClient_LL_DoWork(iotHubClientHandle);
-            delay(2000);
+            delay(100);
         }
 
         IoTHubClient_LL_Destroy(iotHubClientHandle);

@@ -4,7 +4,7 @@
 #if defined(ARDUINO_ARCH_SAMD)
 #include "NTPClient.h"
 
-#define LOCAL_UDP_PORT 2390
+const int LOCAL_UDP_PORT = 2390;
 
 NTPClient::NTPClient() :
     _udp()

@@ -12,10 +12,10 @@
 #ifndef NTPCLIENT_H
 #define NTPCLIENT_H
 
-#define NTP_PACKET_SIZE     48
-#define NTP_PORT            123
+const int NTP_PACKET_SIZE = 48;
+const int NTP_PORT = 123;
 
-#define DEFAULT_NTP_TIMEOUT 10000
+const int DEFAULT_NTP_TIMEOUT = 10000;
 
 class NTPClient
 {

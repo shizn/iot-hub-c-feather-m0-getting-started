@@ -15,13 +15,14 @@
 
 #include "sdk/jsondecoder.h"
 
-#define WINC_CS   8
-#define WINC_IRQ  7
-#define WINC_RST  4
-#define WINC_EN   2
+#define  WINC_EN     2
 
-#define LED_PIN  13
-bool lastMessageReceived = false;
+const int WINC_CS  = 8;
+const int WINC_IRQ = 7;
+const int WINC_RST = 4;
+
+const int LED_PIN  = 13;
+static bool lastMessageReceived = false;
 
 // Setup the WINC1500 connection with the pins above and the default hardware SPI.
 Adafruit_WINC1500 WiFi(WINC_CS, WINC_IRQ, WINC_RST);
@@ -93,7 +94,7 @@ void initTime()
 {
     Adafruit_WINC1500UDP     _udp;
 
-    time_t epochTime = (time_t)-1;
+    time_t epochTime = (time_t) - 1;
 
     NTPClient ntpClient;
     ntpClient.begin();
@@ -102,7 +103,7 @@ void initTime()
     {
         epochTime = ntpClient.getEpochTime("pool.ntp.org");
 
-        if (epochTime == (time_t)-1)
+        if (epochTime == (time_t) - 1)
         {
             Serial.println("Fetching NTP epoch time failed! Waiting 2 seconds to retry.");
             delay(2000);

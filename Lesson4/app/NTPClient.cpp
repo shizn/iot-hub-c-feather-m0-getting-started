@@ -4,7 +4,7 @@
 #if defined(ARDUINO_ARCH_SAMD)
 #include "NTPClient.h"
 
-#define LOCAL_UDP_PORT 2390
+const int LOCAL_UDP_PORT = 2390;
 
 NTPClient::NTPClient() :
     _udp()
@@ -74,7 +74,8 @@ int NTPClient::receiveResponse(unsigned long timeout)
         size = _udp.parsePacket();
     }
 
-    if (size != NTP_PACKET_SIZE) {
+    if (size != NTP_PACKET_SIZE) 
+    {
         return 0;
     }
 
