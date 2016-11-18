@@ -16,30 +16,21 @@ Please follow the [Lesson 1: Configure your device] for detailed walkthrough of 
 
 ### Install required tools
 
-  ```bash
-  npm install -g gulp device-discovery-cli
-  ```
+```bash
+npm install -g gulp device-discovery-cli
+```
 
 ### Deploy and run
 
 Install required npm packages on the host:
 
-  ```bash
-  # For Windows command prompt
-  npm install
-
-  # For macOS or Ubuntu
-  sudo npm install
-  ```
+```bash
+npm install
+```
 
 Install required tools/packages for the  Adafruit Feather M0 WiFi board, deploy sample application, and run it on the device:
 
-  ```bash
-  # For Windows command prompt
-  gulp install-tools
-  gulp run
-
-  # For macOS or Ubuntu
-  sudo gulp install-tools
-  sudo gulp run
-  ```
+```bash
+gulp install-tools
+gulp run
+```
