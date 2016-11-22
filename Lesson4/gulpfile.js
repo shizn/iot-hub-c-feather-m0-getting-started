@@ -4,6 +4,7 @@
 'use strict';
 
 var gulp = require('gulp');
+var runSequence = require('run-sequence');
 
 // Blink interval in ms
 var INTERVAL = 2000;
@@ -62,7 +63,7 @@ gulp.task('send-cloud-to-device-messages', false, function () {
   var sendMessage = function () {
     sentMessageCount++;
     var message = buildMessage(sentMessageCount);
-    console.log('[IoT Hub] Sending message #' + sentMessageCount + ': ' + message.getData());
+    console.log('[IoT Hub] Sending message #' + sentMessageCount + ': ' + message.getData() + '\n');
     client.send(targetDevice, message, sendMessageCallback);
   };
 
@@ -110,4 +111,7 @@ gulp.task('send-cloud-to-device-messages', false, function () {
 /**
  * Override 'run' task with customized behavior
  */
-gulp.task('run', 'Runs deployed sample on the board', ['deploy', 'send-cloud-to-device-messages']);
+gulp.task('run', 'Runs deployed sample on the board', function(cb) {
+  runSequence('deploy', 'send-cloud-to-device-messages', cb);
+});
+

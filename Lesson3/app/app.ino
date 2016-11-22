@@ -205,6 +205,11 @@ void setup()
 
 void loop()
 {
+    if (sentMessageCount >= MAX_MESSAGE_COUNT)
+    {
+        return;
+    }
+
     IOTHUB_CLIENT_LL_HANDLE iotHubClientHandle = IoTHubClient_LL_CreateFromConnectionString(connectionString, HTTP_Protocol);
 
     if (iotHubClientHandle == NULL)

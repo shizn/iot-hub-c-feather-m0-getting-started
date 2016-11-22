@@ -17,6 +17,9 @@ var readIoTHub = function (config) {
   };
   var printMessage = function (message) {
     console.log('[IoT Hub] Received message: ' + JSON.stringify(message.body) + '\n');
+    if (message.body.messageId && message.body.messageId === 20) {
+      cleanup();
+    }
   };
 
   // Only receive messages sent to IoT Hub after this time.

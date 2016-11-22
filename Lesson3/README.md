@@ -30,20 +30,26 @@ npm install
 ```
 
 Create a JSON configuration file in the `.iot-hub-getting-started` sub-folder of the current user's home directory:
-  
+
 ```bash
 gulp init
 ```
 
 Install required tools/packages on the Adafruit Feather M0 WiFi board, deploy sample application, and run it on the device:
-  
+
 ```bash
 gulp install-tools
+
 gulp run
+# You can monitor the serial port by running listen task:
+gulp listen
+
+# Or you can combine above two gulp tasks into one:
+gulp run --listen
 ```
 
 Run the sample application on the device and read messages persisted in the Azure storage:
-  
+
 ```bash
 gulp run --read-storage
 ```

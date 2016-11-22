@@ -32,5 +32,11 @@ Install required tools/packages for the  Adafruit Feather M0 WiFi board, deploy 
 
 ```bash
 gulp install-tools
+
 gulp run
+# You can monitor the serial port by running listen task:
+gulp listen
+
+# Or you can combine above two gulp tasks into one:
+gulp run --listen
 ```
