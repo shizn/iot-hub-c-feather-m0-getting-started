@@ -10,6 +10,7 @@
 #include <sys/time.h>
 #include "NTPClient.h"
 #include <AzureIoTHub.h>
+#include <AzureIoTProtocol_HTTP.h>
 
 #include "config.h"
 
